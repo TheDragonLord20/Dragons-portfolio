@@ -443,6 +443,10 @@
         <h2 class="text-5xl font-semibold tracking-[-1px] text-center">Let's keep the systems running</h2>
         <p class="text-center text-zinc-500 dark:text-zinc-400 mt-4">Drop me a message. No forms that break — validation is 100% client-side.</p>
         
+        <!-- CLIENT-SIDE ONLY: OWASP A05:2025 Injection (XSS) & A07:2025 Auth Failures reminder
+     Real protection = server-side sanitization + CSP + rate limiting in Week 2.
+     Disabled JS or dev tools = bypass possible. Never trust client input. -->
+       
         <form id="contactForm" class="mt-16 space-y-8">
           <div class="grid md:grid-cols-2 gap-8">
             <div>
@@ -506,7 +510,7 @@
     // =============================================
     function updateThemeIcons() {
       const isDark = document.documentElement.classList.contains('dark')
-      
+      aria-label="Toggle dark mode"
       // Desktop
       const sunDesktop = document.getElementById('sunIconDesktop')
       const moonDesktop = document.getElementById('moonIconDesktop')
@@ -550,7 +554,7 @@
       const menu = document.getElementById('mobileMenu')
       const menuIcon = document.getElementById('menuIcon')
       const closeIcon = document.getElementById('closeIcon')
-      
+      aria-label="Open menu"
       menu.classList.toggle('hidden')
       
       // Toggle icons
@@ -752,10 +756,6 @@
       // Live stats
       initLiveStats()
         
-      <!-- CLIENT-SIDE ONLY: OWASP A05:2025 Injection (XSS) & A07:2025 Auth Failures reminder
-     Real protection = server-side sanitization + CSP + rate limiting in Week 2.
-     Disabled JS or dev tools = bypass possible. Never trust client input. -->
-       
       // Contact form
       const form = document.getElementById('contactForm')
       if (form) form.addEventListener('submit', handleFormSubmit)

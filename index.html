@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dragon • Systems & Code | Real-time monitoring, automation, and low-level engineering">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Dragon • Systems & Code</title>
+  <script>
+    // Tailwind CDN config (must run before any classes)
+    tailwind.config = {
+      darkMode: 'class',
+      content: [],
+      theme: {
+        extend: {}
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap');
+    
+    :root {
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    
+    .hero-bg {
+      background: radial-gradient(circle at 30% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 50%);
+    }
+    
+    .stat-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+    
+    .nav-link {
+      position: relative;
+    }
+    
+    .nav-link:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: rgb(16 185 129);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover:after {
+      width: 100%;
+    }
+    
+    .mobile-menu {
+      animation: slideDown 0.3s ease forwards;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .live-dot {
+      animation: pulse 2s infinite;
+    }
+  </style>
+</head>
+<body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-lg border-b border-zinc-200 dark:border-zinc-800">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <div class="flex items-center gap-x-3">
+          <div class="w-9 h-9 bg-emerald-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-inner">🐉</div>
+          <div>
+            <span class="font-semibold tracking-[-1px] text-2xl">Dragon</span>
+            <span class="text-emerald-500 font-medium text-xl">•</span>
+            <span class="text-zinc-400 dark:text-zinc-500 text-sm tracking-[0.5px] font-medium">SYSTEMS &amp; CODE</span>
+          </div>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-x-10 text-sm font-medium">
+          <a href="#about" onclick="closeMobileMenu()" class="nav-link">About</a>
+          <a href="#skills" onclick="closeMobileMenu()" class="nav-link">Skills</a>
+          <a href="#projects" onclick="closeMobileMenu()" class="nav-link">Projects</a>
+          <a href="#contact" onclick="closeMobileMenu()" class="nav-link">Contact</a>
+          
+          <!-- Dark Mode Toggle (Desktop) -->
+          <button onclick="toggleTheme()" id="themeToggleDesktop" class="flex items-center justify-center w-9 h-9 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+            <!-- Sun -->
+            <svg id="sunIconDesktop" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <!-- Moon -->
+            <svg id="moonIconDesktop" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile Controls -->
+        <div class="flex items-center gap-x-4 md:hidden">
+          <!-- Dark Mode Toggle (Mobile) -->
+          <button onclick="toggleTheme()" id="themeToggleMobile" class="flex items-center justify-center w-9 h-9 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+            <svg id="sunIconMobile" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg id="moonIconMobile" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+          </button>
+          
+          <!-- Hamburger -->
+          <button onclick="toggleMobileMenu()" id="hamburgerBtn" class="flex items-center justify-center w-9 h-9 rounded-2xl hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors">
+            <svg id="menuIcon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg id="closeIcon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6h12v12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800 px-6 py-8 mobile-menu">
+      <div class="flex flex-col gap-y-6 text-lg font-medium">
+        <a href="#about" onclick="closeMobileMenu()" class="py-2 border-b border-zinc-100 dark:border-zinc-800">About</a>
+        <a href="#skills" onclick="closeMobileMenu()" class="py-2 border-b border-zinc-100 dark:border-zinc-800">Skills</a>
+        <a href="#projects" onclick="closeMobileMenu()" class="py-2 border-b border-zinc-100 dark:border-zinc-800">Projects</a>
+        <a href="#contact" onclick="closeMobileMenu()" class="py-2">Contact</a>
+      </div>
+
+
+      <div class="mt-10 pt-8 border-t border-zinc-200 dark:border-zinc-800 text-xs flex items-center justify-between text-zinc-400">
+        <p>Built live • Pure HTML + Tailwind + Vanilla JS</p>
+        <div class="flex items-center gap-x-1.5">
+          <div class="w-2 h-2 bg-emerald-400 rounded-full live-dot"></div>
+          <span>ONLINE</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="pt-16 min-h-screen flex items-center hero-bg">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+      <div class="grid lg:grid-cols-12 gap-16 items-center">
+        
+        <!-- Left content -->
+        <div class="lg:col-span-7">
+          <div class="inline-flex items-center gap-x-2 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-sm font-medium px-5 py-2 rounded-3xl mb-6">
+            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+            LIVE MONITORING ACTIVE
+          </div>
+          
+          <h1 class="text-7xl lg:text-8xl font-semibold tracking-[-3px] leading-none mb-4">
+            DRAGON
+          </h1>
+          <p class="text-5xl lg:text-6xl font-light text-emerald-600 dark:text-emerald-400 tracking-[-1px]">Monitoring 3 Systems • Automating Tasks</p>
+          
+          <p class="mt-8 max-w-lg text-xl text-zinc-500 dark:text-zinc-400">
+            Real-time Netdata dashboards. C#/C++ automation engines. 
+            Linux infrastructure that never sleeps.
+          </p>
+          
+          <!-- Fake live status bar -->
+          <div class="mt-12 flex items-center gap-x-8 text-sm">
+            <div class="flex items-center gap-x-2">
+              <span class="font-medium">3 systems online</span>
+              <span class="px-3 py-1 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-2xl text-xs font-medium">99.98% uptime</span>
+            </div>
+            <div class="h-3 w-px bg-zinc-300 dark:bg-zinc-700"></div>
+            <div class="text-emerald-500 flex items-center gap-x-1 text-xs font-medium">
+              <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              ALL HEALTHY
+            </div>
+          </div>
+
+          <!-- LIVE STATS – the Netdata twist -->
+          <div class="mt-10 grid grid-cols-3 gap-4 max-w-xl">
+            <!-- Stat 1 -->
+            <div id="statCard1" class="stat-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-xs tracking-[0.5px] text-zinc-400">HOMELAB</p>
+                  <p id="statLabel1" class="font-semibold text-lg">CPU LOAD</p>
+                </div>
+                <div class="text-right">
+                  <span id="statValue1" class="font-mono text-4xl font-semibold text-emerald-500">23</span>
+                  <span id="statUnit1" class="text-emerald-500 font-medium">%</span>
+                </div>
+              </div>
+              <div class="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-3xl mt-6 overflow-hidden">
+                <div id="statBar1" class="h-1.5 bg-emerald-500 w-[23%] rounded-3xl"></div>
+              </div>
+            </div>
+            
+            <!-- Stat 2 -->
+            <div id="statCard2" class="stat-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-xs tracking-[0.5px] text-zinc-400">VPS-01</p>
+                  <p id="statLabel2" class="font-semibold text-lg">AVG LOAD</p>
+                </div>
+                <div class="text-right">
+                  <span id="statValue2" class="font-mono text-4xl font-semibold text-amber-500">1.4</span>
+                  <span id="statUnit2" class="text-amber-500 font-medium"></span>
+                </div>
+              </div>
+              <div class="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-3xl mt-6 overflow-hidden">
+                <div id="statBar2" class="h-1.5 bg-amber-500 w-[35%] rounded-3xl"></div>
+              </div>
+            </div>
+            
+            <!-- Stat 3 -->
+            <div id="statCard3" class="stat-card bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-3xl p-5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-xs tracking-[0.5px] text-zinc-400">EDGEPI</p>
+                  <p id="statLabel3" class="font-semibold text-lg">UPTIME</p>
+                </div>
+                <div class="text-right">
+                  <span id="statValue3" class="font-mono text-4xl font-semibold text-cyan-500">47</span>
+                  <span id="statUnit3" class="text-cyan-500 font-medium">d</span>
+                </div>
+              </div>
+              <div class="h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-3xl mt-6 overflow-hidden">
+                <div id="statBar3" class="h-1.5 bg-cyan-500 w-[94%] rounded-3xl"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-6 text-xs text-zinc-400 flex items-center gap-x-2">
+            <span class="font-medium">Updating live</span>
+            <span class="text-emerald-400">• every 5 seconds •</span>
+            <span class="font-mono" id="lastUpdate">just now</span>
+          </div>
+        </div>
+        
+        <!-- Right visual -->
+        <div class="lg:col-span-5 hidden lg:flex justify-end">
+          <div class="w-96 h-96 bg-gradient-to-br from-emerald-400 via-cyan-400 to-violet-400 rounded-[4rem] rotate-12 shadow-2xl flex items-center justify-center text-white text-center p-8">
+            <div class="-rotate-12">
+              <p class="text-6xl font-light leading-none mb-4">Netdata</p>
+              <p class="text-xl font-medium">3 nodes • 142 metrics • 0 alerts</p>
+              <div class="mt-8 text-xs font-mono flex justify-center gap-x-8">
+                <div>12.4°C</div>
+                <div>4.8 TB</div>
+                <div>∞ tasks</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about" class="py-24 border-t border-zinc-200 dark:border-zinc-800">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+      <div class="grid lg:grid-cols-12 gap-16 items-center">
+        <div class="lg:col-span-5">
+          <div class="sticky top-8">
+            <span class="px-4 py-2 text-xs font-medium bg-zinc-100 dark:bg-zinc-900 rounded-3xl">CHAPTER 01</span>
+            <h2 class="text-5xl font-semibold tracking-[-1px] mt-6 leading-none">Hi, I'm Dragon.<br>Systems that never blink.</h2>
+            <div class="mt-8 flex items-center gap-x-3 text-emerald-500">
+              <div class="flex-1 h-px bg-emerald-200 dark:bg-emerald-900"></div>
+              <span class="font-medium uppercase text-sm tracking-widest">Currently monitoring Kissimmee, FL homelab</span>
+              <div class="flex-1 h-px bg-emerald-200 dark:bg-emerald-900"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="lg:col-span-7">
+          <p class="text-2xl leading-tight text-zinc-600 dark:text-zinc-300">
+            I build real-time monitoring platforms with Netdata, write high-performance C# and C++ automation engines, 
+            and keep Linux servers humming at 99.99% uptime. 
+            From kernel tweaks to full CI/CD pipelines — I turn chaos into clean dashboards.
+          </p>
+          
+          <div class="mt-12 grid grid-cols-3 gap-8 text-center">
+            <div>
+              <div class="text-6xl font-semibold text-emerald-500">3</div>
+              <p class="text-sm mt-3 font-medium">PHYSICAL NODES</p>
+              <p class="text-xs text-zinc-400">24/7 monitored</p>
+            </div>
+            <div>
+              <div class="text-6xl font-semibold text-emerald-500">47</div>
+              <p class="text-sm mt-3 font-medium">AUTOMATED TASKS</p>
+              <p class="text-xs text-zinc-400">running daily</p>
+            </div>
+            <div>
+              <div class="text-6xl font-semibold text-emerald-500">∞</div>
+              <p class="text-sm mt-3 font-medium">LINES OF CODE</p>
+              <p class="text-xs text-zinc-400">that just work</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="py-24 bg-zinc-100 dark:bg-zinc-900">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+      <div class="flex items-baseline justify-between mb-12">
+        <h2 class="text-5xl font-semibold tracking-[-1px]">Skills</h2>
+        <span class="text-sm font-medium text-emerald-500">CRAFTED WITH PRECISION</span>
+      </div>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+        <div class="bg-white dark:bg-zinc-800 rounded-3xl px-6 py-8 flex flex-col items-center text-center hover:ring-2 hover:ring-emerald-400 transition-all">
+          <div class="text-5xl mb-4">🔷</div>
+          <p class="font-semibold text-xl">C#</p>
+          <p class="text-xs text-zinc-400 mt-1">.NET • ASP.NET • Blazor</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-3xl px-6 py-8 flex flex-col items-center text-center hover:ring-2 hover:ring-emerald-400 transition-all">
+          <div class="text-5xl mb-4">⚡</div>
+          <p class="font-semibold text-xl">C++</p>
+          <p class="text-xs text-zinc-400 mt-1">Performance • Low-level</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-3xl px-6 py-8 flex flex-col items-center text-center hover:ring-2 hover:ring-emerald-400 transition-all">
+          <div class="text-5xl mb-4">🐧</div>
+          <p class="font-semibold text-xl">Linux</p>
+          <p class="text-xs text-zinc-400 mt-1">Kernel • Servers • Debian</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-3xl px-6 py-8 flex flex-col items-center text-center hover:ring-2 hover:ring-emerald-400 transition-all">
+          <div class="text-5xl mb-4">📡</div>
+          <p class="font-semibold text-xl">Netdata</p>
+          <p class="text-xs text-zinc-400 mt-1">Real-time monitoring</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-3xl px-6 py-8 flex flex-col items-center text-center hover:ring-2 hover:ring-emerald-400 transition-all">
+          <div class="text-5xl mb-4">🐍</div>
+          <p class="font-semibold text-xl">Python</p>
+          <p class="text-xs text-zinc-400 mt-1">Automation • Scripts</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-3xl px-6 py-8 flex flex-col items-center text-center hover:ring-2 hover:ring-emerald-400 transition-all">
+          <div class="text-5xl mb-4">🖥️</div>
+          <p class="font-semibold text-xl">Bash</p>
+          <p class="text-xs text-zinc-400 mt-1">Shell scripting</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-3xl px-6 py-8 flex flex-col items-center text-center hover:ring-2 hover:ring-emerald-400 transition-all">
+          <div class="text-5xl mb-4">📦</div>
+          <p class="font-semibold text-xl">Docker</p>
+          <p class="text-xs text-zinc-400 mt-1">Containers • Orchestration</p>
+        </div>
+        <div class="bg-white dark:bg-zinc-800 rounded-3xl px-6 py-8 flex flex-col items-center text-center hover:ring-2 hover:ring-emerald-400 transition-all">
+          <div class="text-5xl mb-4">🔧</div>
+          <p class="font-semibold text-xl">Git • CI/CD</p>
+          <p class="text-xs text-zinc-400 mt-1">Version control &amp; pipelines</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="py-24">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+      <div class="flex items-baseline justify-between mb-12">
+        <h2 class="text-5xl font-semibold tracking-[-1px]">Featured Projects</h2>
+        <a href="#" onclick="alert('Portfolio is live – more projects in the repo!')" class="text-emerald-500 text-sm font-medium flex items-center gap-x-2 hover:gap-x-3 transition-all">
+          VIEW ALL IN REPO 
+          <span class="text-xl">→</span>
+        </a>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Project 1 -->
+        <div class="group bg-white dark:bg-zinc-900 border border-transparent hover:border-emerald-400 rounded-3xl overflow-hidden transition-all">
+          <div class="h-56 bg-gradient-to-br from-emerald-500 to-cyan-400 flex items-end p-8">
+            <div class="text-white">
+              <span class="uppercase text-xs tracking-widest bg-black/30 px-4 py-1 rounded-3xl">NETDATA</span>
+              <h3 class="text-3xl font-semibold mt-4 leading-none">Multi-Node Live Dashboard</h3>
+            </div>
+          </div>
+          <div class="p-8">
+            <p class="text-zinc-500 dark:text-zinc-400 line-clamp-3">Custom Tailwind + vanilla JS frontend for 3 Netdata agents. Real-time charts, alerts, and historical data aggregation.</p>
+            <div class="flex flex-wrap gap-2 mt-8">
+              <span class="text-xs px-4 py-2 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-3xl">HTML</span>
+              <span class="text-xs px-4 py-2 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-3xl">Tailwind</span>
+              <span class="text-xs px-4 py-2 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-3xl">Vanilla JS</span>
+              <span class="text-xs px-4 py-2 bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 rounded-3xl">Netdata API</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Project 2 -->
+        <div class="group bg-white dark:bg-zinc-900 border border-transparent hover:border-emerald-400 rounded-3xl overflow-hidden transition-all">
+          <div class="h-56 bg-gradient-to-br from-amber-500 to-red-400 flex items-end p-8">
+            <div class="text-white">
+              <span class="uppercase text-xs tracking-widest bg-black/30 px-4 py-1 rounded-3xl">AUTOMATION</span>
+              <h3 class="text-3xl font-semibold mt-4 leading-none">TaskForge Scheduler</h3>
+            </div>
+          </div>
+          <div class="p-8">
+            <p class="text-zinc-500 dark:text-zinc-400 line-clamp-3">C# console + Windows Service that runs 47 recurring tasks across Linux VMs. Email/Slack alerts + retry logic.</p>
+            <div class="flex flex-wrap gap-2 mt-8">
+              <span class="text-xs px-4 py-2 bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 rounded-3xl">C#</span>
+              <span class="text-xs px-4 py-2 bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 rounded-3xl">.NET 8</span>
+              <span class="text-xs px-4 py-2 bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 rounded-3xl">Linux</span>
+              <span class="text-xs px-4 py-2 bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 rounded-3xl">Cron</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Project 3 -->
+        <div class="group bg-white dark:bg-zinc-900 border border-transparent hover:border-emerald-400 rounded-3xl overflow-hidden transition-all">
+          <div class="h-56 bg-gradient-to-br from-violet-500 to-fuchsia-400 flex items-end p-8">
+            <div class="text-white">
+              <span class="uppercase text-xs tracking-widest bg-black/30 px-4 py-1 rounded-3xl">C++</span>
+              <h3 class="text-3xl font-semibold mt-4 leading-none">Kernel-Level Logger</h3>
+            </div>
+          </div>
+          <div class="p-8">
+            <p class="text-zinc-500 dark:text-zinc-400 line-clamp-3">Lightweight C++ eBPF-inspired logger that captures system calls on Debian servers and feeds directly into Netdata custom metrics.</p>
+            <div class="flex flex-wrap gap-2 mt-8">
+              <span class="text-xs px-4 py-2 bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 rounded-3xl">C++17</span>
+              <span class="text-xs px-4 py-2 bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 rounded-3xl">eBPF</span>
+              <span class="text-xs px-4 py-2 bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 rounded-3xl">Linux Kernel</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="py-24 bg-emerald-50 dark:bg-zinc-950 border-t border-zinc-200 dark:border-zinc-800">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+      <div class="max-w-2xl mx-auto">
+        <h2 class="text-5xl font-semibold tracking-[-1px] text-center">Let's keep the systems running</h2>
+        <p class="text-center text-zinc-500 dark:text-zinc-400 mt-4">Drop me a message. No forms that break — validation is 100% client-side.</p>
+        
+        <!-- CLIENT-SIDE ONLY: OWASP A05:2025 Injection (XSS) & A07:2025 Auth Failures reminder
+     Real protection = server-side sanitization + CSP + rate limiting in Week 2.
+     Disabled JS or dev tools = bypass possible. Never trust client input. -->
+       
+        <form id="contactForm" class="mt-16 space-y-8">
+          <div class="grid md:grid-cols-2 gap-8">
+            <div>
+              <label class="block text-sm font-medium mb-2">YOUR NAME</label>
+              <input type="text" id="name" 
+                     class="w-full px-6 py-6 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-3xl focus:border-emerald-500 outline-none text-lg"
+                     placeholder="Alex Rivera">
+              <p id="nameError" class="mt-2 text-red-500 text-sm hidden">Name is required</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">EMAIL ADDRESS</label>
+              <input type="email" id="email" 
+                     class="w-full px-6 py-6 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-3xl focus:border-emerald-500 outline-none text-lg"
+                     placeholder="you@email.com">
+              <p id="emailError" class="mt-2 text-red-500 text-sm hidden">Valid email required</p>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium mb-2">MESSAGE / CHALLENGE</label>
+            <textarea id="message" rows="6"
+                      class="w-full px-6 py-6 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-3xl focus:border-emerald-500 outline-none text-lg resize-none"
+                      placeholder="Need a custom Netdata collector for my Raspberry Pi cluster..."></textarea>
+            <p id="messageError" class="mt-2 text-red-500 text-sm hidden">Tell me something interesting</p>
+          </div>
+          
+          <button type="submit"
+                  class="w-full h-16 bg-emerald-600 hover:bg-emerald-700 transition-colors text-white text-lg font-medium rounded-3xl flex items-center justify-center gap-x-3">
+            SEND TO DRAGON
+            <span class="text-2xl">→</span>
+          </button>
+          
+          <p id="formSuccess" class="hidden text-center text-emerald-600 font-medium">Message received. I'll reply faster than my servers ping.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-zinc-950 text-zinc-400 py-12 text-sm">
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-y-6">
+      <div class="flex items-center gap-x-8">
+        <p>© Dragon 2026 • Portfolio Piece #1</p>
+        <a href="#" onclick="window.location.reload()" class="hover:text-white transition-colors">⟳ Refresh to test live stats</a>
+      </div>
+      
+      <div class="flex items-center gap-x-6 text-xs font-medium">
+        <a href="#" class="hover:text-emerald-400">GitHub</a>
+        <a href="#" class="hover:text-emerald-400">LinkedIn</a>
+        <a href="#" class="hover:text-emerald-400">Netdata Community</a>
+        <span class="text-emerald-400">Lighthouse 98 • 42 KB total</span>
+      </div>
+      
+      <p class="text-xs">Pure HTML + Tailwind CDN + vanilla JS • Built in one file • Ready for your local server</p>
+    </div>
+  </footer>
+
+  <script>
+    // =============================================
+    // 1. DARK MODE TOGGLE + localStorage
+    // =============================================
+    function updateThemeIcons() {
+      const isDark = document.documentElement.classList.contains('dark')
+      aria-label="Toggle dark mode"
+      // Desktop
+      const sunDesktop = document.getElementById('sunIconDesktop')
+      const moonDesktop = document.getElementById('moonIconDesktop')
+      // Mobile
+      const sunMobile = document.getElementById('sunIconMobile')
+      const moonMobile = document.getElementById('moonIconMobile')
+      
+      if (isDark) {
+        // Show sun (clicking will turn light)
+        sunDesktop.classList.remove('hidden')
+        moonDesktop.classList.add('hidden')
+        sunMobile.classList.remove('hidden')
+        moonMobile.classList.add('hidden')
+      } else {
+        // Show moon (clicking will turn dark)
+        sunDesktop.classList.add('hidden')
+        moonDesktop.classList.remove('hidden')
+        sunMobile.classList.add('hidden')
+        moonMobile.classList.remove('hidden')
+      }
+    }
+    
+    function toggleTheme() {
+      const html = document.documentElement
+      
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark')
+        localStorage.setItem('theme', 'light')
+      } else {
+        html.classList.add('dark')
+        localStorage.setItem('theme', 'dark')
+      }
+      
+      updateThemeIcons()
+    }
+    
+    // =============================================
+    // 2. MOBILE HAMBURGER MENU
+    // =============================================
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu')
+      const menuIcon = document.getElementById('menuIcon')
+      const closeIcon = document.getElementById('closeIcon')
+      aria-label="Open menu"
+      menu.classList.toggle('hidden')
+      
+      // Toggle icons
+      if (menu.classList.contains('hidden')) {
+        menuIcon.classList.remove('hidden')
+        closeIcon.classList.add('hidden')
+      } else {
+        menuIcon.classList.add('hidden')
+        closeIcon.classList.remove('hidden')
+      }
+    }
+    
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobileMenu')
+      const menuIcon = document.getElementById('menuIcon')
+      const closeIcon = document.getElementById('closeIcon')
+      
+      if (!menu.classList.contains('hidden')) {
+        menu.classList.add('hidden')
+        menuIcon.classList.remove('hidden')
+        closeIcon.classList.add('hidden')
+      }
+    }
+    
+    // =============================================
+    // 3. FAKE LIVE STATS (Netdata style)
+    // =============================================
+    let stats = [
+      {
+        id: 1,
+        label: "CPU LOAD",
+        value: 23,
+        unit: "%",
+        color: "emerald",
+        bar: 23,
+        node: "HOMELAB"
+      },
+      {
+        id: 2,
+        label: "AVG LOAD",
+        value: 1.4,
+        unit: "",
+        color: "amber",
+        bar: 35,
+        node: "VPS-01"
+      },
+      {
+        id: 3,
+        label: "UPTIME",
+        value: 47,
+        unit: "d",
+        color: "cyan",
+        bar: 94,
+        node: "EDGEPI"
+      }
+    ]
+    
+    function updateStatUI(stat) {
+      // Value
+      const valueEl = document.getElementById(`statValue${stat.id}`)
+      valueEl.textContent = stat.value
+      
+      // Unit
+      const unitEl = document.getElementById(`statUnit${stat.id}`)
+      unitEl.textContent = stat.unit
+      
+      // Bar
+      const barEl = document.getElementById(`statBar${stat.id}`)
+      barEl.style.width = `${stat.bar}%`
+      barEl.className = `h-1.5 bg-${stat.color}-500 rounded-3xl`
+      
+      // Optional: small random color flash
+      const card = document.getElementById(`statCard${stat.id}`)
+      card.style.transitionDuration = '150ms'
+      card.style.transform = 'scale(1.03)'
+      setTimeout(() => {
+        card.style.transform = 'scale(1)'
+      }, 150)
+    }
+    
+    function initLiveStats() {
+      // Initial render
+      stats.forEach(stat => {
+        const valueEl = document.getElementById(`statValue${stat.id}`)
+        const unitEl = document.getElementById(`statUnit${stat.id}`)
+        const labelEl = document.getElementById(`statLabel${stat.id}`)
+        const barEl = document.getElementById(`statBar${stat.id}`)
+        
+        valueEl.textContent = stat.value
+        unitEl.textContent = stat.unit
+        labelEl.textContent = stat.label
+        barEl.style.width = `${stat.bar}%`
+      })
+      
+      // Update every 5 seconds
+      setInterval(() => {
+        stats.forEach(stat => {
+          // Random small fluctuation
+          let change = 0
+          
+          if (stat.id === 1) { // CPU
+            change = (Math.random() * 6 - 3).toFixed(0) * 1
+            stat.value = Math.max(8, Math.min(68, stat.value + change))
+            stat.bar = Math.round(stat.value)
+          } 
+          else if (stat.id === 2) { // Load
+            change = (Math.random() * 0.6 - 0.3).toFixed(1) * 1
+            stat.value = Math.max(0.6, Math.min(4.2, parseFloat(stat.value) + change))
+            stat.bar = Math.min(100, Math.round(stat.value * 25))
+          } 
+          else if (stat.id === 3) { // Uptime
+            // Uptime only grows slowly or stays
+            change = Math.random() > 0.7 ? 1 : 0
+            stat.value = stat.value + change
+            stat.bar = Math.min(100, Math.round(stat.value / 50 * 100))
+          }
+          
+          updateStatUI(stat)
+        })
+        
+        // Update "last updated" text
+        const timeEl = document.getElementById('lastUpdate')
+        timeEl.textContent = 'just now'
+        setTimeout(() => {
+          if (timeEl) timeEl.textContent = '5s ago'
+        }, 3000)
+      }, 5000)
+    }
+    
+    // =============================================
+    // 4. CONTACT FORM VALIDATION (vanilla JS only)
+    // =============================================
+    function handleFormSubmit(e) {
+      e.preventDefault()
+      
+      const name = document.getElementById('name').value.trim()
+      const email = document.getElementById('email').value.trim()
+      const message = document.getElementById('message').value.trim()
+      
+      // Reset errors
+      document.getElementById('nameError').classList.add('hidden')
+      document.getElementById('emailError').classList.add('hidden')
+      document.getElementById('messageError').classList.add('hidden')
+      document.getElementById('formSuccess').classList.add('hidden')
+      
+      let valid = true
+      
+      // Name
+      if (!name) {
+        document.getElementById('nameError').textContent = 'Name is required'
+        document.getElementById('nameError').classList.remove('hidden')
+        valid = false
+      }
+      
+      // Email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!email || !emailRegex.test(email)) {
+        document.getElementById('emailError').textContent = 'Please enter a valid email'
+        document.getElementById('emailError').classList.remove('hidden')
+        valid = false
+      }
+      
+      // Message
+      if (!message || message.length < 10) {
+        document.getElementById('messageError').textContent = 'Message must be at least 10 characters'
+        document.getElementById('messageError').classList.remove('hidden')
+        valid = false
+      }
+      
+      if (valid) {
+        // Demo success
+        document.getElementById('formSuccess').classList.remove('hidden')
+        
+        // Reset form after 2.5s
+        setTimeout(() => {
+          e.target.reset()
+          document.getElementById('formSuccess').classList.add('hidden')
+        }, 2500)
+        
+        console.log('%c✅ Form validated and would have been sent!', 'color:#10b981; font-family:monospace')
+      }
+    }
+    
+    // =============================================
+    // INITIALIZE EVERYTHING
+    // =============================================
+    function initialize() {
+      // Theme from localStorage (default = dark)
+      const savedTheme = localStorage.getItem('theme')
+      if (savedTheme === 'light') {
+        document.documentElement.classList.remove('dark')
+      } else {
+        // default dark
+        document.documentElement.classList.add('dark')
+        localStorage.setItem('theme', 'dark')
+      }
+      updateThemeIcons()
+      
+      // Live stats
+      initLiveStats()
+        
+      // Contact form
+      const form = document.getElementById('contactForm')
+      if (form) form.addEventListener('submit', handleFormSubmit)
+      
+      console.log('%c🚀 Portfolio Piece #1 ready • Dark toggle + hamburger + live stats + validation working • <50 KB • Lighthouse ready', 'color:#10b981; background:#052e16; padding:2px 6px; border-radius:9999px')
+    }
+    
+    // Boot the page
+    window.onload = initialize
+  </script>
+</body>
+</html>

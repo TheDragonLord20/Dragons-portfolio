@@ -751,7 +751,11 @@
       
       // Live stats
       initLiveStats()
-      
+        
+      <!-- CLIENT-SIDE ONLY: OWASP A05:2025 Injection (XSS) & A07:2025 Auth Failures reminder
+     Real protection = server-side sanitization + CSP + rate limiting in Week 2.
+     Disabled JS or dev tools = bypass possible. Never trust client input. -->
+       
       // Contact form
       const form = document.getElementById('contactForm')
       if (form) form.addEventListener('submit', handleFormSubmit)
